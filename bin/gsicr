@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+sbcl --non-interactive \
+  --eval '(require :asdf)' \
+  --eval '(require :quicklisp)' \
+  --eval '(push #P"/Users/ralph/projects/groupscholar-intro-call-registry/" asdf:*central-registry*)' \
+  --eval '(ql:quickload :groupscholar-intro-call-registry)' \
+  --eval '(gsicr:main)'
