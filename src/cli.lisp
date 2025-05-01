@@ -8,6 +8,7 @@
   (format t "  add --scholar NAME --partner ORG --call-date YYYY-MM-DD --outcome OUTCOME [--follow-up YYYY-MM-DD] [--notes TEXT]\n")
   (format t "  list [--limit N]\n")
   (format t "  summary\n")
+  (format t "  partner-summary [--limit N]\n")
   (format t "  follow-ups [--days N]\n")
   (format t "\nEnvironment variables:\n")
   (format t "  GSICR_DB_HOST, GSICR_DB_PORT, GSICR_DB_NAME, GSICR_DB_USER, GSICR_DB_PASSWORD\n")
@@ -52,6 +53,14 @@
     (destructuring-bind (scholar partner follow-up outcome) row
       (format t "~a | ~a | ~a | ~a~%" scholar partner follow-up outcome))))
 
+(defun print-partner-summary (rows)
+  (format t "~%Partner | Total | Attended | Converted | No-Show | Last Call | Next Follow Up~%")
+  (format t "--------------------------------------------------------------------------------~%")
+  (dolist (row rows)
+    (destructuring-bind (partner total attended converted no-show last-call next-follow-up) row
+      (format t "~a | ~a | ~a | ~a | ~a | ~a | ~a~%"
+              partner total attended converted no-show last-call (or next-follow-up "-")))))
+
 (defun handle-command (command options)
   (let ((cfg (load-db-config)))
     (cond
@@ -78,6 +87,9 @@
          (print-list (list-intro-calls cfg limit))))
       ((string= command "summary")
        (print-summary (summarize-intro-calls cfg)))
+      ((string= command "partner-summary")
+       (let* ((limit (parse-integer (option options "--limit" "20"))))
+         (print-partner-summary (partner-summary cfg limit))))
       ((string= command "follow-ups")
        (let ((days (parse-integer (option options "--days" "14"))))
          (print-follow-ups (upcoming-follow-ups cfg days))))

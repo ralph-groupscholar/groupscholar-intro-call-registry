@@ -66,6 +66,15 @@
                "select outcome, count(*) as total, max(call_date) as last_call from ~a group by outcome order by total desc"
                table)))))
 
+(defun partner-summary (cfg limit)
+  (with-db (cfg)
+    (let ((table (format nil "~a.intro_calls" (db-config-schema cfg))))
+      (postmodern:query
+       (format nil
+               "select partner_org,\n        count(*) as total,\n        sum(case when outcome = 'attended' then 1 else 0 end) as attended,\n        sum(case when outcome = 'converted' then 1 else 0 end) as converted,\n        sum(case when outcome = 'no-show' then 1 else 0 end) as no_show,\n        max(call_date) as last_call,\n        min(follow_up_date) filter (where follow_up_date >= current_date) as next_follow_up\n  from ~a\n group by partner_org\n order by total desc, partner_org asc\n limit $1"
+               table)
+       limit))))
+
 (defun upcoming-follow-ups (cfg days)
   (with-db (cfg)
     (let ((table (format nil "~a.intro_calls" (db-config-schema cfg))))

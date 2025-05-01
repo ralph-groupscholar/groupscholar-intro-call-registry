@@ -6,6 +6,7 @@ Common Lisp CLI to log scholar intro calls, track follow-ups, and summarize outc
 - Create schema and tables for intro call tracking
 - Add new intro call records with follow-up dates and notes
 - List recent calls and summarize outcomes
+- Summarize partner performance with conversion outcomes and next follow-ups
 - Show upcoming follow-ups within a configurable window
 
 ## Tech
@@ -31,6 +32,7 @@ Run from the repo root:
 ./bin/gsicr add --scholar "Ava Torres" --partner "FirstGen Alliance" --call-date 2026-02-05 --outcome attended --follow-up 2026-02-12 --notes "Needs FAFSA support."
 ./bin/gsicr list --limit 10
 ./bin/gsicr summary
+./bin/gsicr partner-summary --limit 15
 ./bin/gsicr follow-ups --days 21
 ```
 
